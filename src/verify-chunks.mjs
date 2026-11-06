@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+const chunks = JSON.parse(fs.readFileSync(process.argv[2] ?? 'chunks.json', 'utf8'));
+const page14 = chunks.filter(chunk => chunk.page_number === 14).sort((a, b) => a.chunk_index - b.chunk_index);
+const first = page14.find(chunk => chunk.chunk_index === 0);
+const next = page14.find(chunk => chunk.chunk_index > 0);
+if (!first || !next) throw new Error('Expected page 14 to have chunk indices 0 and 1.');
+const words = value => value.trim().split(/\s+/).filter(Boolean);
+const firstWords = words(first.text);
+const nextWords = words(next.text);
+const shared = firstWords.slice(-40).join(' ') === nextWords.slice(0, 40).join(' ');
+console.log('Page 14 chunk 0 first 200 characters:');
+console.log(first.text.slice(0, 200));
+console.log(`Page ${next.page_number}, chunk_index ${next.chunk_index}, ${nextWords.length} words:`);
+console.log(next.text);
+console.log(JSON.stringify({overlap_words:40,exact_overlap_match:shared}, null, 2));
+if (!shared) process.exitCode = 1;

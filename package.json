@@ -1,0 +1,13 @@
+{
+  "name": "ai-study-assistant-day-one",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "chunk": "node src/chunker.mjs test.pdf chunks.json",
+    "embed:cloudflare": "node src/cloudflare-embeddings.mjs chunks.json"
+  },
+  "dependencies": {
+    "pdfjs-dist": "5.6.205",
+    "pg": "^8.23.1"
+  }
+}
