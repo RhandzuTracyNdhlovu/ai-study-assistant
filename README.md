@@ -75,3 +75,10 @@ The Day One chunker (src/chunker.mjs), its verification script (src/verify-chunk
 I learned how a PDF question-answering system works from document text to retrieval: split text into page-aware chunks, create embeddings, store them in pgvector, and retrieve relevant passages for a question. The 40-word overlap helps preserve context between chunks, and keeping page numbers lets answers include citations. I also learned that retrieval needs careful checking: the right page can rank below other results, and a similarity cutoff can reject some off-topic questions while still letting a partially related question through.
 
 I confirmed that Neon could enable pgvector on my free project, and that the embedding array’s length determines the vector(N) size in the schema. I learned to keep .env out of Git before staging files, and to report clearly which parts I ran, which I built with AI assistance, and which still need verification. One thing I still need to measure is the actual Workers AI neuron usage for my embedding batch.
+## Roadmap (from mentor feedback)
+Mentor feedback listed: no live demo link or graphical interface, no flashcard or quiz generation, no DOCX support. All three were already listed as not built above. Planned order:
+1. Flashcards: retrieve chunks, ask the chat model for JSON cards (question, answer, page), validate the JSON before saving.
+2. Quizzes: the same approach with multiple-choice JSON.
+3. Next.js interface: upload, chat view and flashcard view, calling the same pipeline from API routes.
+4. DOCX: extract text with mammoth; DOCX has no fixed pages, so citations would use headings instead of page numbers.
+5. Deployment for a live demo link.
