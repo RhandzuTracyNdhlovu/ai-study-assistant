@@ -1,13 +1,24 @@
 {
-  "name": "ai-study-assistant-day-one",
+  "name": "ai-study-assistant",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "chunk": "node src/chunker.mjs test.pdf chunks.json",
     "embed:cloudflare": "node src/cloudflare-embeddings.mjs chunks.json"
   },
   "dependencies": {
+    "next": "^15.5.0",
     "pdfjs-dist": "5.6.205",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "@types/react": "19.3.0",
+    "typescript": "5.8.2"
   }
 }
