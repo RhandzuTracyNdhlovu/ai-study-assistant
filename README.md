@@ -1,5 +1,11 @@
 # AI Study Assistant (Chat with Your Notes)
 
+**Live Demo:** [Try AI Study Assistant](https://ai-study-assistant-xi-eight.vercel.app/)
+
+Your personal AI-powered learning companion.
+
+Ask questions about your study materials and get AI-generated answers with source references.
+
 MentorTechz internship, Project 3. A retrieval-augmented (RAG) prototype: it indexes a PDF, finds the passages that match a question, and answers from them with page citations.
 
 **Status: working command-line prototype with partial scope. It is not the full feature list.**
