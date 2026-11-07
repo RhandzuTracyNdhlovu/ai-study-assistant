@@ -102,6 +102,7 @@ export async function POST(request: Request) {
     );
 
     const aiBody = await aiResponse.json();
+    console.log("CLOUDFLARE AI BODY:", aiBody);
 
     if (!aiResponse.ok || !aiBody.success) {
       console.error("AI generation error:", aiBody);
@@ -111,7 +112,9 @@ export async function POST(request: Request) {
   // STEP 5: Return answer and sources
 return NextResponse.json({
   question,
-  answer: aiBody.result?.response || "The AI could not generate an answer. Please try again.",
+  answer:
+  aiBody.result?.choices?.[0]?.message?.content ||
+  "The AI could not generate an answer. Please try again.",
   sources: rows.map(row => ({
     page_number: row.page_number,
     chunk_index: row.chunk_index,
@@ -121,7 +124,7 @@ return NextResponse.json({
 });
 
   } catch (error) {
-    conanswer: aiBody.result.response,ole.error("Study Assistant error:", error);
+   console.error("Study Assistant error:", error);
 
     return NextResponse.json(
       {
