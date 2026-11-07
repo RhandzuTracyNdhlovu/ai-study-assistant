@@ -136,14 +136,17 @@ export async function POST(request: Request) {
       jsonText.substring(start, end + 1)
     );
 
-    if (
-      !Array.isArray(parsed.flashcards) ||
-      parsed.flashcards.length === 0 ||
-      !parsed.flashcards.every(
-        (card: any) =>
-          typeof card.question === "string" &&
-          typeof card.answer === "string"
-      )
+   if (
+  !Array.isArray(parsed.flashcards) ||
+  parsed.flashcards.length !== 6 ||
+  !parsed.flashcards.every(
+    (card: any) =>
+      typeof card.question === "string" &&
+      card.question.trim().length > 0 &&
+      typeof card.answer === "string" &&
+      card.answer.trim().length > 0
+  )
+
     ) {
       throw new Error("The AI returned invalid flashcards.");
     }

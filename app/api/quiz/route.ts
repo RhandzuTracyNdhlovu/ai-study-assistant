@@ -151,6 +151,7 @@ export async function POST(request: Request) {
           Array.isArray(q.options) &&
           q.options.length === 4 &&
           q.options.every((option: any) => typeof option === "string") &&
+          new Set(q.options).size === 4 &&
           typeof q.correctAnswer === "string" &&
           q.options.includes(q.correctAnswer)
       )
