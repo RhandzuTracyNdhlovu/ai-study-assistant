@@ -30,6 +30,7 @@ const [selectedAnswer, setSelectedAnswer] = useState("");
 const [quizScore, setQuizScore] = useState(0);
 const [quizSubmitted, setQuizSubmitted] = useState(false);
 const [quizFinished, setQuizFinished] = useState(false);
+const [quizResponses, setQuizResponses] = useState([]);
 
   async function uploadDocument() {
     if (!file) {
@@ -158,6 +159,7 @@ async function generateQuiz() {
   setQuizScore(0);
   setQuizSubmitted(false);
   setQuizFinished(false);
+  setQuizResponses([]);
 
   try {
     const response = await fetch("/api/quiz", {
@@ -363,6 +365,7 @@ async function generateQuiz() {
           {generatingQuiz ? "Generating Quiz..." : "Generate Practice Quiz"}
         </button>
 
+      
         {quizError && <p>{quizError}</p>}
 
         {quiz.length > 0 && !quizFinished && (
@@ -377,7 +380,17 @@ async function generateQuiz() {
               <button
                 key={index}
                 disabled={quizSubmitted}
-                onClick={() => setSelectedAnswer(option)}
+                onClick={() => {
+                  setSelectedAnswer(option);
+                  setQuizResponses((previous) => {
+                    const updated = [...previous];
+                    updated[currentQuestion] = {
+                      selectedAnswer: option,
+                      submitted: false,
+                    };
+                    return updated;
+                  });
+                }}
               >
                 {option}
                 {selectedAnswer === option ? " ✓" : ""}
@@ -388,41 +401,67 @@ async function generateQuiz() {
               <button
                 disabled={!selectedAnswer}
                 onClick={() => {
-                  if (
-                    selectedAnswer ===
-                    quiz[currentQuestion].correctAnswer
-                  ) {
-                    setQuizScore(quizScore + 1);
-                  }
+                  setQuizResponses((previous) => {
+                    const updated = [...previous];
+                    updated[currentQuestion] = {
+                      selectedAnswer,
+                      submitted: true,
+                    };
+                    return updated;
+                  });
                   setQuizSubmitted(true);
                 }}
               >
                 Submit Answer
               </button>
             ) : (
-              <>
-                <p>
-                  {selectedAnswer === quiz[currentQuestion].correctAnswer
-                    ? "Correct! Well done."
-                    : `Incorrect. Correct answer: ${quiz[currentQuestion].correctAnswer}`}
-                </p>
+              <p>
+                {selectedAnswer === quiz[currentQuestion].correctAnswer
+                  ? "Correct! Well done."
+                  : `Incorrect. Correct answer: ${quiz[currentQuestion].correctAnswer}`}
+              </p>
+            )}
 
-                <button
-                  onClick={() => {
-                    if (currentQuestion === quiz.length - 1) {
-                      setQuizFinished(true);
-                    } else {
-                      setCurrentQuestion(currentQuestion + 1);
-                    }
-                    setSelectedAnswer("");
-                    setQuizSubmitted(false);
-                  }}
-                >
-                  {currentQuestion === quiz.length - 1
-                    ? "Finish Quiz"
-                    : "Next Question"}
-                </button>
-              </>
+            <button
+              disabled={currentQuestion === 0}
+              onClick={() => {
+                const previousQuestion = currentQuestion - 1;
+                const response = quizResponses[previousQuestion] || {};
+
+                setCurrentQuestion(previousQuestion);
+                setSelectedAnswer(response.selectedAnswer || "");
+                setQuizSubmitted(!!response.submitted);
+              }}
+            >
+              Previous
+            </button>
+
+            {quizSubmitted && (
+              <button
+                onClick={() => {
+                  if (currentQuestion === quiz.length - 1) {
+                    setQuizScore(
+                      quizResponses.filter(
+                        (response, index) =>
+                          response?.submitted &&
+                          response.selectedAnswer === quiz[index].correctAnswer
+                      ).length
+                    );
+                    setQuizFinished(true);
+                  } else {
+                    const nextQuestion = currentQuestion + 1;
+                    const response = quizResponses[nextQuestion] || {};
+
+                    setCurrentQuestion(nextQuestion);
+                    setSelectedAnswer(response.selectedAnswer || "");
+                    setQuizSubmitted(!!response.submitted);
+                  }
+                }}
+              >
+                {currentQuestion === quiz.length - 1
+                  ? "Finish Quiz"
+                  : "Next Question"}
+              </button>
             )}
           </div>
         )}
@@ -436,6 +475,7 @@ async function generateQuiz() {
             </button>
           </div>
         )}
+
       </section>
 
       <footer>
